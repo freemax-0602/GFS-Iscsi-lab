@@ -1,0 +1,8 @@
+---
+
+- name: Deploy iscsi
+  hosts: all
+  become: true
+  roles:
+    - githubixx.iscsi_target
+    
