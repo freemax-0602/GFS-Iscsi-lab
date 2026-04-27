@@ -8,6 +8,11 @@ variable "vm_name" {
   type        = string
 }
 
+variable "vm_user" {
+  description = "Пользователь ВМ"
+  type        = string
+}
+
 variable "vm_hostname" {
   description = "Hostname VM"
   type        = string
@@ -55,4 +60,14 @@ variable "disk_type" {
 variable "disk_size" {
   description = "Размер диска"
   type        = number
+}
+
+variable "subnet_id" {
+  type = string
+  description = "ID подсети из модуля network"
+}
+
+variable "nat_ip" {
+  type    = bool
+  default = true
 }

@@ -3,11 +3,6 @@ data "yandex_compute_image" "my_image" {
   family = "ubuntu-2204-lts"
 }
 
-data "yandex_vpc_subnet" "default" {
-
-  name = "default-ru-central1-a"
-}
-
 resource "yandex_compute_disk" "boot-disk" {
   name     = var.disk_name
   type     = var.disk_type
@@ -34,11 +29,11 @@ resource "yandex_compute_instance" "vm" {
   }
 
   network_interface {
-    subnet_id = data.yandex_vpc_subnet.default.id
-    nat       = true
+    subnet_id = var.subnet_id
+    nat       = var.nat_ip
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${file(var.vm_ssh_public_key)}"
+    ssh-keys = "${var.vm_user}:${file(var.vm_ssh_public_key)}"
   }
 }

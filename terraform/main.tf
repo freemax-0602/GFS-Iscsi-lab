@@ -1,3 +1,11 @@
+module "net" {
+  source = "./modules/net"
+  net_name = "lab-net"
+  subnet_name = "lab-subnet-a"
+  subnet_cidr = ["10.2.0.0/16"]
+  zone        = "ru-central1-a"
+}
+
 
 module "vpc-1" {
     source = "./modules/vpc"
@@ -13,6 +21,8 @@ module "vpc-1" {
     vm_platform_id = "standard-v3"
     vm_cpu = 2
     vm_ram = 2
+    vm_user = "ubuntu"
+    subnet_id = module.net.subnet_id
 }
 
 module "vpc-2" {
@@ -29,6 +39,8 @@ module "vpc-2" {
     vm_platform_id = "standard-v3"
     vm_cpu = 2
     vm_ram = 2
+    vm_user = "ubuntu"
+    subnet_id = module.net.subnet_id
 }
 
 module "vpc-3" {
@@ -45,6 +57,8 @@ module "vpc-3" {
     vm_platform_id = "standard-v3"
     vm_cpu = 2
     vm_ram = 2
+    vm_user = "ubuntu"
+    subnet_id = module.net.subnet_id
 }
 
 module "vpc-4" {
@@ -61,36 +75,27 @@ module "vpc-4" {
     vm_platform_id = "standard-v3"
     vm_cpu = 2
     vm_ram = 2
+    vm_user = "ubuntu"
+    subnet_id = module.net.subnet_id
 }
 
-output "vpc_1_public_ip" {
-    value = module.vpc-1.public_ip_vm
+
+output "vpc_1_ssh_user" {
+  value = module.vpc-1.ssh_user
 }
 
-output "vpc_1_private_ip" {
-   value = module.vpc-1.private_ip_vm
+output "vpc_1_ssh_command" {
+  value = module.vpc-1.ssh_connection_string
 }
 
-output "vpc_2_public_ip" {
-    value = module.vpc-2.public_ip_vm
-}
-
-output "vpc_2_private_ip" {
-    value = module.vpc-2.private_ip_vm
-}
-
-output "vpc_3_public_ip" {
-    value = module.vpc-3.public_ip_vm
-}
-
-output "vpc_3_private_ip" {
-    value = module.vpc-3.private_ip_vm
-}
-
-output "vpc_4_public_ip" {
-    value = module.vpc-4.public_ip_vm
-}
-
-output "vpc_4_private_ip" {
-    value = module.vpc-4.private_ip_vm
+# Для всех ВМ сразу
+output "all_ssh_connections" {
+  description = "SSH commands for all instances"
+  value = {
+    vpc-1 = module.vpc-1.ssh_connection_string
+    vpc-2 = module.vpc-2.ssh_connection_string
+    vpc-3 = module.vpc-3.ssh_connection_string
+    vpc-4 = module.vpc-4.ssh_connection_string
+  }
+  sensitive = false
 }
