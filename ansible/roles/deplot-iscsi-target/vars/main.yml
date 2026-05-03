@@ -1,0 +1,14 @@
+---
+iscsi_packages: 
+  - target-fb
+  - python3-distutils
+  - python3-rtslib
+
+iscsi_backstores:
+  - name: disk1
+    path: /var/iscsi/disks/disk1.img
+    size: 10G # TO-DO добавить размер диска в виде переменной из скрипта
+  - name: disk2
+    path: /var/iscsi/disks/disk2.img
+    size: 20G # TO-DO добавить размер диска в виде переменной из скрипта
+  

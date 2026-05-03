@@ -8,6 +8,11 @@ variable "vm_name" {
   type        = string
 }
 
+variable "vm_guest" {
+  description = "OS для VPC"
+  type        = string
+}
+
 variable "vm_user" {
   description = "Пользователь ВМ"
   type        = string

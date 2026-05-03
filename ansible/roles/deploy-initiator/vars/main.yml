@@ -1,0 +1,16 @@
+---
+iscsi_packages: 
+  - target-fb
+  - python3-distutils
+  - python3-rtslib
+
+iscsi_targets:
+  - iqn: "iqn.2026-05.com.example:storage.target1"
+    backstores: [disk1]
+    initiators:
+      - "iqn.2026-05.com.example:client1"
+      - "iqn.2026-05.com.example:client2"
+  - iqn: "iqn.2026-05.com.example:storage.target2"
+    backstores: [disk2]
+    initiators:
+      - "iqn.2026-05.com.example:client3"

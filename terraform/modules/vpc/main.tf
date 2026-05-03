@@ -1,6 +1,7 @@
 
 data "yandex_compute_image" "my_image" {
-  family = "ubuntu-2204-lts"
+  family = var.vm_guest
+  #family = "ubuntu-2204-lts"
 }
 
 resource "yandex_compute_disk" "boot-disk" {
@@ -33,7 +34,12 @@ resource "yandex_compute_instance" "vm" {
     nat       = var.nat_ip
   }
 
+
   metadata = {
     ssh-keys = "${var.vm_user}:${file(var.vm_ssh_public_key)}"
+    user_data = <<-EOF
+      - python3
+      - python3-pip
+    EOF
   }
 }

@@ -1,8 +1,9 @@
 ---
 
-- name: Deploy iscsi
+- name: Install packages
   hosts: all
   become: true
   roles:
-    - githubixx.iscsi_target
-    
+    - install-packages
+  tags:
+    - install

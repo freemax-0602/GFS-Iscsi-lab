@@ -2,6 +2,4 @@
 iscsi_packages: 
   - target-fb
   - python3-distutils
-
-#iscsi_target_service_name:
-#  - 
+  - python3-rtslib

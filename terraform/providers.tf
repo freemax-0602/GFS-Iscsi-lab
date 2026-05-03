@@ -13,6 +13,6 @@ terraform {
 # Провайдер yandex по умолчанию (зона доступности ru-central-b)
 provider "yandex" {
   token = "y0__xCivdNrGMHdEyD26-ycFHJtujA-g_jF-B7gylu-R_VCzu5r"
-  folder_id = "b1gkiafie74e9a5f3et3"
+  folder_id = "b1gegd9ptre3uv28nsr1"
   zone = "ru-central1-a"
 }
