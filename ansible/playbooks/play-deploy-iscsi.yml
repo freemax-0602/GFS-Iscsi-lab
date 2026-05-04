@@ -1,9 +1,11 @@
 ---
 
 - name: Install packages
-  hosts: all
+  hosts: iscsi-target
   become: true
   roles:
-    - install-packages
+#    - ../roles/install-packages
+    - ../roles/deploy-iscsi-target
   tags:
     - install
+    - target

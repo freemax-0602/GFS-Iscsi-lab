@@ -334,11 +334,11 @@ main() {
     echo -e "${DIM}Директория: ${SCRIPT_DIR}${RESET}"
     echo ""
     
-    check_dependencies
+    #check_dependencies
     load_config
-    authenticate_yc
-    run_terraform
-    #run_ansible
+    #authenticate_yc
+    #run_terraform
+    run_ansible
     #final_check
     #show_summary
     

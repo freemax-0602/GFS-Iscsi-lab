@@ -1,5 +1,5 @@
 ---
 iscsi_packages: 
-  - target-fb
-  - python3-distutils
-  - python3-rtslib
+  - targetcli-fb
+#  - python3-distutils
+#  - python3-rtslib

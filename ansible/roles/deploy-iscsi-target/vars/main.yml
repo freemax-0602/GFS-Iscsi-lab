@@ -1,0 +1,15 @@
+---
+
+iscsi_dir: /var/iscsi/disks
+
+iscsi_backstores:
+  - name: disk1
+    device: /dev/sdb #var-install
+
+iscsi_targets:
+  - iqn: "iqn.2026-05.iscsi.pilot:storage.target00"
+    backstores: [disk1]
+    initiators:
+      - "iqn.2026-05.iscsi.pilot:gfs-node-1"
+      - "iqn.2026-05.iscsi.pilot:gfs-node-2"
+      - "iqn.2026-05.iscsi.pilot:gfs-node-3"
