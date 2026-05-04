@@ -47,11 +47,7 @@ variable "vm_ram" {
   description = "Размер ОЗУ ВМ"
   type        = number
 }
-/*
-==================================================
-============= Описание дисков ВМ =================
-==================================================
-*/
+
 variable "disk_name" {
   description = "Имя диска на ВМ"
   type        = string
@@ -74,5 +70,5 @@ variable "subnet_id" {
 
 variable "nat_ip" {
   type    = bool
-  default = true
+  description = "VM nat ip"
 }

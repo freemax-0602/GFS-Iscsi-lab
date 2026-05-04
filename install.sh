@@ -225,7 +225,15 @@ load_config() {
     prompt_input "Yandex Clound Service Account Description:" "" "YC_SERVICE_ACCOUNT_DESCRIPTION"
     prompt_input "Yandex Cloud Service Account Role:" "" "YC_SERVICE_ACCOUNT_ROLE"
     prompt_input "Yandex Cloud Folder ID:" "" "YC_FOLDER_ID"
-    #prompt_input "Зона доступности" "ru-central1-a" "VM_ZONE"
+    prompt_input "Зона доступности" "ru-central1-a" "VM_ZONE"
+    prompt_input "Гостевая операционаня система" "centos-7" "VM_OS"
+    prompt_input "Наименование диска"
+    prompt_input "Тип диска"
+    prompt_input "Наименование сервера"
+    prompt_input "Используемое CPU"
+    prompt_input "Размер RAM (Gb)"
+    prompt_input "Имя пользователя"
+    prompt_input "Путь ssh-ключа"
     #prompt_input "Количество узлов GFS" "3" "VM_COUNT"
     #prompt_input "Размер диска (GB)" "25" "DISK_SIZE"
     #prompt_input "Тип диска" "network-hdd" "DISK_TYPE"
@@ -337,8 +345,8 @@ main() {
     #check_dependencies
     load_config
     #authenticate_yc
-    #run_terraform
-    run_ansible
+    run_terraform
+    #run_ansible
     #final_check
     #show_summary
     

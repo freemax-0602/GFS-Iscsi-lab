@@ -14,26 +14,25 @@ module "service_account" {
    zone        = "ru-central1-a"
 }
 
-
-# module "vpc-1" {
-#     source = "./modules/vpc"
-#     vm_zone = "ru-central1-a"
-#     vm_guest = "centos-7"
-#     vm_ssh_public_key = "~/.ssh/id_ed25519.pub"
-#     // Параметры диска
-#     disk_name = "iscsi-disk"
-#     disk_type = "network-hdd"
-#     disk_size = 50
-#     // Параметры ВМ
-#     vm_name = "iscsi-target"
-#     vm_hostname = "iscsi1"
-#     vm_platform_id = "standard-v3"
-#     vm_cpu = 2
-#     vm_ram = 2
-#     vm_user = "centos"
-#     subnet_id = module.net.subnet_id
-#     nat_ip = false
-# }
+module "vpc-1" {
+    source = "./modules/vpc"
+    vm_zone = "ru-central1-a"
+    vm_guest = "centos-7"
+    vm_ssh_public_key = "~/.ssh/id_ed25519.pub"
+    // Параметры диска
+    disk_name = "iscsi-disk"
+    disk_type = "network-hdd"
+    disk_size = 50
+    // Параметры ВМ
+    vm_name = "iscsi-target"
+    vm_hostname = "iscsi1"
+    vm_platform_id = "standard-v3"
+    vm_cpu = 2
+    vm_ram = 2
+    vm_user = "centos"
+    subnet_id = module.net.subnet_id
+    nat_ip = true
+}
 
 # module "vpc-2" {
 #     source = "./modules/vpc"
