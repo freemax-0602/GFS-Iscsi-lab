@@ -1,7 +1,23 @@
 --- 
 
-- name: install packages
+- name: install packages target
   apt:
-    name: "{{ iscsi_packages }}"
+    name: "{{ iscsi_target_packages }}"
     state: present
     update_cache: yes
+  when: role == "iscsi-target"
+
+- name: install packages iscsi
+  apt:
+    name: "{{ iscsi_initiator_packages }}"
+    state: present
+    update_cache: yes
+  when: role == "gfs"
+
+- name: install packages gfs cluster
+  apt:
+    name: "{{ iscsi_gfs_packages }}"
+    state: present
+    update_cache: yes
+  when: role == "gfs"
+

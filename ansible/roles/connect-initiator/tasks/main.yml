@@ -1,0 +1,31 @@
+---
+
+- name: Set initiator IQN
+  lineinfile:
+    path: /etc/iscsi/initiatorname.iscsi
+    regexp: "^InitiatorName="
+    line: "InitiatorName={{ initiator_iqn }}"
+  notify: Restart iscsid
+
+- name: Discorver ISCSI targets
+  open_iscsi:
+    show_nodes: true
+    discover: true
+    ip: "{{ iscsi_target_ip }}"
+
+- name: Login to iSCSI target
+  open_iscsi:
+    login: true
+    target: "{{ iscsi_target_standalone }}"
+    portal: "{{ iscsi_target_ip }}"
+
+# - name: Perform a discovery on 10.1.2.3 and show available target nodes
+#   open_iscsi:
+#     show_nodes: true
+#     discover: true
+#     ip: 192.168.1.32
+
+# - name: Disconnect from the cached named target
+#   community.general.open_iscsi:
+#     login: true
+#     target: iqn.2026-05.iscsi.pilot:storage.target00

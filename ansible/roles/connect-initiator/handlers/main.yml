@@ -1,0 +1,7 @@
+---
+
+- name: Restart iscsid
+  systemd:
+    name: iscsid
+    state: restarted
+    daemon_reload: yes

@@ -1,0 +1,26 @@
+---
+
+- name: Install packages iscsi-target
+  hosts: all
+  become: true
+  roles:
+    - ../roles/install-packages
+  tags:
+    - install
+
+- name: Create iscsi-target
+  hosts: iscsi-target
+  become: true
+  roles:
+    - ../roles/deploy-iscsi-target
+  tags:
+    - install
+    - target
+
+- name: Connect iscsi-initiator
+  hosts: gfs-nodes
+  become: true
+  roles:
+    - ../roles/connect-initiator
+  tags:
+    - initiator

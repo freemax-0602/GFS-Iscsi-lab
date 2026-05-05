@@ -1,5 +1,13 @@
 ---
-iscsi_packages: 
+
+iscsi_target_packages: 
   - targetcli-fb
-#  - python3-distutils
-#  - python3-rtslib
+
+iscsi_initiator_packages:
+  - open-iscsi
+
+iscsi_gfs_packages:
+  - lvm2
+#  - dlm
+#  - lvmlockd
+  - gfs2-utils

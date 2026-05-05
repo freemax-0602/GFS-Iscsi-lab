@@ -21,7 +21,6 @@
   changed_when: false
   tags: [config]
 
-# 2. Создаём только если нет
 - name: Create block backstore
   shell: |
     targetcli /backstores/block create name={{ item.name }} dev={{ item.device }}
@@ -40,6 +39,15 @@
     - "'already exists' not in target_result.stderr"
     - "target_result.rc != 0"
 
+- name: Check LUNs
+  shell: targetcli /iscsi/{{ item.iqn }}/tpg1/luns ls
+  loop: "{{ iscsi_targets }}"
+  loop_control:
+    loop_var: item
+  register: existing_luns
+  changed_when: false
+  failed_when: false
+
 - name: Create LUNs for target
   shell: |
     targetcli /iscsi/{{ item.iqn }}/tpg1/luns create /backstores/block/{{ bs }}
@@ -49,13 +57,40 @@
   vars:
     bs: "{{ item.backstores[0] }}"
   register: luns_result
-  changed_when: "'Created' in item.stderr"
+  ignore_errors: true
+  tags: [config]
 
-- name: Create ACL for initiator
-  shell: |
-    targetcli /iscsi/{{ item.iqn }}/tpg1/acls create {{ initiator }}
-  loop: "{{ iscsi_targets }}"
+- name: Check Luns Error
+  fail:
+    msg: "Ошибка создания LUN для {{ item.item.iqn }}: {{ item.stderr }}"
+  loop: "{{ luns_result.results }}"
+  when: 
+    - item.failed | default(false)
+    - "'already exists' not in item.stderr"
   loop_control:
-    loop_var: item
-  vars: 
-    initiator: "{{ item.initiators[0] }}"
+    label: "{{ item.item.iqn }}"
+  tags: [config]
+
+- name: Create ACL
+  shell: |
+    targetcli /iscsi/{{ item.0.iqn }}/tpg1/acls create {{ item.1 }}
+  loop: "{{ iscsi_targets | subelements('initiators') }}"
+  loop_control:
+    label: "{{ item.0.iqn }} -> {{ item.1 }}"
+  register: acl_results
+  failed_when: false
+  ignore_errors: true
+
+- name: Check Error ACL
+  fail:
+    msg: "Ошибка ACL {{ item.item.0.iqn }} -> {{ item.item.1 }}: {{ item.stderr }}"
+  loop: "{{ acl_results.results }}"
+  when:
+    - item.rc != 0
+    - "'already exists' not in item.stderr"
+    - "'Created' not in item.stderr"
+  loop_control:
+    label: "{{ item.item.0.iqn }} -> {{ item.item.1 }}"
+  
+- name: Save config 
+  shell: targetcli / saveconfig
