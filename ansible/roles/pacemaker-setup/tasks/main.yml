@@ -1,0 +1,84 @@
+---
+
+- name:  Ensure hacluster user exists
+  user:
+    name: hacluster
+    shell: /sbin/nologin
+    system: yes
+    createhome: no
+
+- name: Set password for hacluster user
+  user:
+    name: hacluster
+    password: "{{ hacluster_password | password_hash('sha512') }}"
+    update_password: always
+  no_log: true
+
+- name: Authenticate cluster nodes
+  command: >
+    pcs host auth
+    {% for host in groups['gfs-nodes'] %}{{ host }} {% endfor %}
+    -u hacluster
+    -p {{ hacluster_password }}
+  when: inventory_hostname == groups['gfs-nodes'][0]
+  register: pcs_auth_result
+  changed_when: "'Authorized' in pcs_auth_result.stdout"
+
+- name: Setup Pacemaker cluster
+  command: >
+    pcs cluster setup {{ cluster_name }}
+    {% for host in groups['gfs-nodes'] %}{{ host }} {% endfor %}
+    --force
+  when: inventory_hostname == groups['gfs-nodes'][0]
+  register: cluster_setup_result
+  changed_when: "'Successfully created cluster' in cluster_setup_result.stdout"
+
+- name: Show cluster setup result
+  debug:
+    var: cluster_setup_result.stdout_lines
+  when: 
+    - inventory_hostname == groups['gfs-nodes'][0]
+    - cluster_setup_result is changed
+
+- name: Start cluster on all nodes
+  command: pcs cluster start
+  register: cluster_start_result
+  changed_when: "'Started' in cluster_start_result.stdout"
+
+- name: Show cluster start result
+  debug:
+    var: cluster_start_result.stdout_lines
+  when: cluster_start_result is changed
+
+- name: Enable cluster autostart
+  command: pcs cluster enable
+
+- name: Configure cluster properties
+  command: pcs property set {{ item.key }}={{ item.value }}
+  loop:
+    - { key: 'stonith-enabled', value: 'false' }
+    - { key: 'cluster-recheck-interval', value: '2min' }
+  when: inventory_hostname == groups['gfs-nodes'][0]
+
+- name: Wait for cluster to be ready
+  wait_for:
+    timeout: 30
+    sleep: 5
+
+- name: Check cluster status
+  command: pcs status
+  register: cluster_status
+  changed_when: false
+
+- name: Show cluster status
+  debug:
+    var: cluster_status.stdout_lines
+
+- name: Check cluster nodes
+  command: pcs status nodes
+  register: cluster_nodes
+  changed_when: false
+
+- name: Show cluster nodes
+  debug:
+    var: cluster_nodes.stdout_lines

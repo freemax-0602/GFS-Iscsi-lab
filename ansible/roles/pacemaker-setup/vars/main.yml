@@ -1,0 +1,11 @@
+---
+
+cluster_name: gfs-cluster
+
+hacluster_password: "clusterpass"  # ⚠️ Ansible Vault!
+
+stonith_enabled: false
+cluster_recheck_interval: "2min"
+
+pacemaker_resources: []
+pacemaker_constraints: []

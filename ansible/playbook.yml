@@ -33,6 +33,24 @@
     - corosync
     - cluster
 
+- name: Setup dlm
+  hosts: gfs-nodes #TO-DO: Выбор мастера на котором сделаются GFS-разделы
+  become: true
+  roles:
+    - ../roles/setup-dlm
+  tags:
+    - dlm
+    - cluster
+
+- name: Setup corosync
+  hosts: gfs-nodes #TO-DO: Выбор мастера на котором сделаются GFS-разделы
+  become: true
+  roles:
+    - ../roles/pacemaker-setup
+  tags:
+    - pacemaker
+    - cluster
+
 # - name: Create LVM on iscsi-disk
 #   hosts: gfs-node-1 #TO-DO: Выбор мастера на котором сделаются GFS-разделы
 #   become: true
