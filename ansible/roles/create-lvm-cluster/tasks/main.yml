@@ -1,0 +1,147 @@
+---
+
+- name: Check resources
+  block:
+  # Check new vg_root
+    - name: Verify DLM is running before LVM
+      command: systemctl is-active dlm
+      register: dlm_status
+      changed_when: false
+      ignore_errors: true
+      failed_when: dlm_status.stdout != 'active'
+
+    - name: Show DLM status
+      debug:
+        msg: "DLM service is {{ dlm_status.stdout }} - OK to proceed with LVM"
+
+    - name: Verify iSCSI disk is available
+      stat:
+        path: "{{ lvm_pv_device }}"
+      register: pv_device
+      failed_when: not pv_device.stat.exists
+
+    - name: Show iSCSI disk status
+      debug:
+        msg: "iSCSI disk {{ lvm_pv_device }} is available"
+  
+    - name: Scan for existing PVs
+      command: pvscan
+      changed_when: false
+
+    - name: Scan for existing VGs
+      command: vgscan
+      changed_when: false
+
+    - name: Scan for existing LVs
+      command: lvscan
+      changed_when: false
+
+    - name: Check if VG already exists
+      command: vgs {{ lvm_vg_name }}
+      register: vg_check
+      changed_when: false
+      failed_when: false
+      tags: [lvm, verify]
+
+    - name: Show VG status
+      debug:
+        msg: >-
+          VG {{ lvm_vg_name }} 
+          {% if vg_check.rc == 0 %}already exists{% else %}does not exist{% endif %}
+  
+  when: role == "master-gfs" 
+
+
+# - name: Create LVM
+#   block:
+
+#     - name: Create Physical Volume
+#       command: pvcreate {{ lvm_pv_device }}
+#       args:
+#         creates: "{{ lvm_pv_device }}"  # Не запускать, если PV уже есть
+#       when:
+#         - vg_check.rc != 0  # Если VG нет, создаём PV
+      
+#     - name: Show PV creation result
+#       debug:
+#         msg: "Physical Volume created on {{ lvm_pv_device }}"
+#       when:
+#         - vg_check.rc != 0
+        
+#     - name: Create volume group
+#       lvg:
+#         vg: "{{ vg_name }}"
+#         pvs: /dev/sdb #TODO-диск может быть другой  
+#         state: present
+#         clustered: yes
+#       when: vg_check.rc != 0 
+
+#     - name: Create clustered Volume Group with DLM
+#       command: >
+#         vgcreate --locktype dlm {{ lvm_vg_name }} {{ lvm_pv_device }}
+#       when:
+#         - vg_check.rc != 0  # Если VG нет
+
+
+
+#     - name: Show VG creation result
+#       debug:
+#         msg: "Volume Group {{ lvm_vg_name }} created with locktype dlm"
+#       when:
+#         - vg_check.rc != 0
+
+
+
+
+
+
+    # # Physical volume create
+    # - name: Create volume group
+    #   lvg:
+    #       vg: "{{ vg_name }}"
+    #       pvs: /dev/sdb #TODO-диск может быть другой  
+    #       state: present
+    #       clustered: yes
+    #   when: vg_check.rc != 0 
+
+    # # Check logical volume 
+    # - name: Check lvc
+    #   shell: "lvdisplay {{ lv_dir }}"
+    #   register: "lv_check"
+    #   changed_when: false
+    #   failed_when: false
+    #   check_mode: no
+
+    # # Create logical valume
+    # - name: Create logical volume
+    #   lvol:
+    #       vg: "{{ vg_name }}"
+    #       lv: "{{ lv_name }}"
+    #       force: yes
+    #       size: 100%FREE
+    #   when: lv_check.rc != 0
+
+#     # Formating xfs filesystem
+#     - name: Format the xfs filesystem
+#       filesystem:
+#         fstype: xfs
+#         dev: "{{ lv_dir }}"
+#   when: role == "mater-node"
+
+# - name: mounting logical volume
+#   block:
+#     # Mounting logical volume
+#     - name: Mounting logical volume on /mnt
+#       mount:
+#         path: "{{ mnt_dir }}" #TO-DO: выбпать из скрипта
+#         src: "{{ lv_dir }}"
+#         fstype: "{{ fs_type }}"
+#         state: mounted
+
+#     # Check /mnt
+#     - name: /mnt check
+#       shell: "ls {{ mnt_dir }}"
+#       register: "check_mnt"
+#       changed_when: false
+#       failed_when: false
+#       check_mode: no

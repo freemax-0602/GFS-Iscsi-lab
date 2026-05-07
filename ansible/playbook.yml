@@ -51,10 +51,12 @@
     - pacemaker
     - cluster
 
-# - name: Create LVM on iscsi-disk
-#   hosts: gfs-node-1 #TO-DO: Выбор мастера на котором сделаются GFS-разделы
-#   become: true
-#   roles:
-#     - ../roles/create-lvm-gfs
-#   tags:
-#     - lvm
+- name: Create LVM cluster
+  hosts: gfs-node-1 #TO-DO: Выбор мастера на котором сделаются GFS-разделы
+  become: true
+  roles:
+    - ../roles/create-lvm-cluster
+  tags:
+    - lvm
+    - cluster
+  

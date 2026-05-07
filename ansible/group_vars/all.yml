@@ -19,8 +19,13 @@ initiator_iqn: "{{ iscsi_iqn_prefix }}:{{ inventory_hostname }}:client{{ invento
 iscsi_target_standalone: iqn.2026-05.iscsi.pilot:storage.target00
 iscsi_target_ip: "192.168.1.32"
 
-vg_name: vg-iscsi
-lv_name: lv-iscsi
-lv_dir: /dev/{{ vg_name }}/{{ lv_name }}
-mnt_dir: /mnt
-fs_type: xfs
+# LVM параметры
+lvm_pv_device: /dev/sdb
+lvm_vg_name: vg-iscsi-gfs
+lvm_lv_name: lv-iscsi-gfs
+lvm_lv_size: "100%FREE"
+
+# Файловая система (для следующего этапа)
+lvm_mount_point: /mnt/gfs
+lvm_fstype: gfs2
+lvm_mount_options: "defaults,noatime"
