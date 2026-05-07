@@ -1,0 +1,69 @@
+
+- name: Generate corosync authkey
+  command: corosync-keygen -l
+  args:
+    creates: "{{ corosync_authkey_file }}"
+  when: inventory_hostname == groups['gfs-nodes'][0]
+
+- name: Read authkey from master node
+  slurp:
+    src: "{{ corosync_authkey_file }}"
+  register: cluster_authkey
+  when: inventory_hostname == groups['gfs-nodes'][0]
+
+- name: Set authkey fact for all nodes
+  set_fact:
+    authkey: "{{ hostvars[groups['gfs-nodes'][0]].cluster_authkey['content'] }}"
+  when: hostvars[groups['gfs-nodes'][0]].cluster_authkey is defined
+
+- name: Deploy authkey to all nodes
+  copy:
+    content: "{{ authkey | b64decode }}"
+    dest: "{{ corosync_authkey_file }}"
+    mode: '0400'
+    owner: root
+    group: root
+  notify: Restart corosync
+    
+- name: Deploy corosync conf
+  template:
+    src: corosync.conf.j2
+    dest: /etc/corosync/corosync.conf
+    mode: '0644'
+    owner: root
+    group: root
+  notify: Restart corosync
+
+- name: Enable and start Corosync service
+  service:
+    name: corosync
+    enabled: true
+    state: started
+
+# - name: Wait for Corosync to be ready
+#   wait_for:
+#     timeout: 30
+#     sleep: 5
+
+- name: Check Corosync service status
+  command: systemctl is-active corosync
+  register: corosync_status
+  changed_when: false
+  failed_when: corosync_status.stdout != 'active'
+
+- name: Show Corosync service status
+  debug:
+    msg: "Corosync service is {{ corosync_status.stdout }}"
+
+- name: Wait for quorum to be established
+  command: corosync-quorumtool -s
+  register: quorum_check
+  until: >
+    'Quorate:          Yes' in quorum_check.stdout
+  retries: 10
+  delay: 5
+  changed_when: false
+
+- name: Show quorum status
+  debug:
+    var: quorum_check.stdout_lines

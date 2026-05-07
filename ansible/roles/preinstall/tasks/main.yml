@@ -1,5 +1,14 @@
 --- 
 
+- name: Update /etc/hosts
+  template:
+    src: templates/hosts.j2
+    dest: /etc/hosts
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+
 - name: install packages target
   apt:
     name: "{{ iscsi_target_packages }}"

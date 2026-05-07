@@ -1,0 +1,12 @@
+---
+- name: Restart corosync
+  service:
+    name: corosync
+    state: restarted
+  listen: "Restart corosync"
+
+- name: Reload corosync
+  service:
+    name: corosync
+    state: reloaded
+  listen: "Reload corosync"

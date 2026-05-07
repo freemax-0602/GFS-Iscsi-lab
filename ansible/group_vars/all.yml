@@ -18,3 +18,9 @@ iscsi_iqn_prefix: "iqn.2026-05.iscsi.pilot"
 initiator_iqn: "{{ iscsi_iqn_prefix }}:{{ inventory_hostname }}:client{{ inventory_hostname.split('-')[-1] }}"
 iscsi_target_standalone: iqn.2026-05.iscsi.pilot:storage.target00
 iscsi_target_ip: "192.168.1.32"
+
+vg_name: vg-iscsi
+lv_name: lv-iscsi
+lv_dir: /dev/{{ vg_name }}/{{ lv_name }}
+mnt_dir: /mnt
+fs_type: xfs

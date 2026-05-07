@@ -4,7 +4,7 @@
   hosts: all
   become: true
   roles:
-    - ../roles/install-packages
+    - ../roles/preinstall
   tags:
     - install
 
@@ -12,15 +12,31 @@
   hosts: iscsi-target
   become: true
   roles:
-    - ../roles/deploy-iscsi-target
+    - ../roles/create-iscsi-target
   tags:
-    - install
     - target
 
 - name: Connect iscsi-initiator
   hosts: gfs-nodes
   become: true
   roles:
-    - ../roles/connect-initiator
+    - ../roles/connect-iscsi-initiator
   tags:
     - initiator
+
+- name: Setup corosync
+  hosts: gfs-nodes #TO-DO: Выбор мастера на котором сделаются GFS-разделы
+  become: true
+  roles:
+    - ../roles/setup-corosync
+  tags:
+    - corosync
+    - cluster
+
+# - name: Create LVM on iscsi-disk
+#   hosts: gfs-node-1 #TO-DO: Выбор мастера на котором сделаются GFS-разделы
+#   become: true
+#   roles:
+#     - ../roles/create-lvm-gfs
+#   tags:
+#     - lvm

@@ -1,0 +1,51 @@
+logging {
+    debug: off
+    to_syslog: yes
+}
+
+totem {
+        version: 2
+        cluster_name: {{ corosync_cluster_name | default('gfs-cluster') }}
+        transport: udpu
+        ip_version: ipv4
+
+        token: 10000
+        token_retransmits_before_loss_const: 10
+        join: 60
+        consensus: 12000
+        max_messages: 60
+
+        interface {
+            ringnumber: 0
+            bindnetaddr: {{ corosync_bindnetaddr | default('10.1.2.0') }}
+            mcastaddr: 239.192.1.1
+            mcastport: 5405
+            ttl: 1
+        }
+
+        crypto_cipher: none
+        crypto_hash: none
+    
+        # Логирование
+        logging {
+            debug: off
+            to_syslog: yes
+            syslog_facility: LOG_DAEMON
+        }
+}
+
+nodelist {
+    {% for host in groups['gfs-nodes']%}
+    node {
+        ring0_addr: {{ hostvars[host]['ansible_host'] | default(hostvars[host]['inventory_hostname']) }}
+        node_id: {{ loop.index }}
+        name: {{ host }}
+        votes: 1
+    }
+    {% endfor%}
+}
+
+quorum {
+    provider:  corosync_votequorum
+    expected_votes: {{ groups['gfs-nodes'] | length }}
+}

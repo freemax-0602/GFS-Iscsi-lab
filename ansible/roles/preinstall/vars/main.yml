@@ -8,6 +8,9 @@ iscsi_initiator_packages:
 
 iscsi_gfs_packages:
   - lvm2
-#  - dlm
-#  - lvmlockd
+  - lvm2-lockd
+  - dlm-controld
   - gfs2-utils
+  - pacemaker
+  - corosync 
+  - pcs

@@ -1,0 +1,4 @@
+---
+
+corosync_dir: /etc/corosync
+corosync_authkey_file: "{{ corosync_dir }}/authkey"
