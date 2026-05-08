@@ -52,7 +52,7 @@
     - cluster
 
 - name: Create LVM cluster
-  hosts: gfs-node-1 #TO-DO: Выбор мастера на котором сделаются GFS-разделы
+  hosts: gfs-nodes #TO-DO: Выбор мастера на котором сделаются GFS-разделы
   become: true
   roles:
     - ../roles/create-lvm-cluster

@@ -1,0 +1,20 @@
+---
+- name: Restart lvmlockd
+  service:
+    name: lvmlockd
+    state: restarted
+  listen: "Restart lvmlockd"
+
+- name: Reload lvmlockd
+  service:
+    name: lvmlockd
+    state: reloaded
+  listen: "Reload lvmlockd"
+
+# - name: Rescan LVM
+#   command: "{{ item }}"
+#   loop:
+#     - pvscan
+#     - vgscan
+#     - lvscan
+#   listen: "Rescan LVM"
