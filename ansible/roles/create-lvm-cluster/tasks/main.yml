@@ -132,7 +132,7 @@
   when: role == "master-gfs" 
 
 - name: Activate Logical Volume on all nodes
-  command: lvchange -ay {{ lvm_vg_name }}/{{ lvm_lv_name }}
+  command: lvchange -asy {{ lvm_vg_name }}/{{ lvm_lv_name }}
   changed_when: false
   failed_when: false
 
